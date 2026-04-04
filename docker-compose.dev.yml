@@ -1,0 +1,14 @@
+version: '3.9'
+
+# Override para desenvolvimento — sem restart automático
+# Uso: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+services:
+  mongodb:
+    restart: "no"
+    ports:
+      - "27017:27017"  # expõe porta para acesso local (ex: MongoDB Compass)
+
+  bot:
+    restart: "no"
+    environment:
+      - NODE_ENV=development
