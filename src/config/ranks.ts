@@ -18,9 +18,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA",
+      "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "❯",
     emoji: "🔵",
@@ -32,9 +32,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA",
+      "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "❯❯",
     emoji: "🔵",
@@ -46,9 +46,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA GRADUADO",
+      "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ], // adicione os cargos extras desta graduação
     nickPrefix: "❯❯❯",
     emoji: "🟡",
@@ -60,9 +60,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA GRADUADO",
+      "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "❯ ❯❯❯",
     emoji: "🟡",
@@ -74,9 +74,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA GRADUADO",
+      "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "❯❯ ❯❯❯",
     emoji: "🟡",
@@ -88,9 +88,9 @@ export const RANKS: Rank[] = [
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
-      "👮🏻‍♀️ | PRAÇA GRADUADO",
+      "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "△",
     emoji: "🟠",
@@ -101,9 +101,10 @@ export const RANKS: Rank[] = [
     roleName: "[✯] ASPIRANTE A OFICIAL PM",
     additionalRoles: [
       "18° BPM/M - FORÇA TÁTICA",
+      "PRAÇAS ESPECIAIS",
       "👮🏻‍♀️| Policial Militar",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "✯",
     emoji: "🟠",
@@ -116,9 +117,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "18° BPM/M - FORÇA TÁTICA",
       "EM/PM",
-      "👮🏻‍♀️ | OFICIAL",
+      "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "✧",
     emoji: "🔴",
@@ -131,9 +132,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "18° BPM/M - FORÇA TÁTICA",
       "EM/PM",
-      "👮🏻‍♀️ | OFICIAL",
+      "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      "👨🏻‍🎓| ESTAGIO - FORÇA TÁTICA",
+      
     ],
     nickPrefix: "✧✧",
     emoji: "🔴",

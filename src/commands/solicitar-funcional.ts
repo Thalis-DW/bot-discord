@@ -17,8 +17,6 @@ import {
 import { RANKS } from "../config/ranks";
 import { logger } from "../logger";
 
-const AUTHORIZED_USER_ID = "695011549072326767";
-
 interface PendingRequest {
   nome: string;
   rg: string;
@@ -33,7 +31,7 @@ const pendingRequests = new Map<string, PendingRequest>();
 export async function handleSolicitarFuncional(
   interaction: ChatInputCommandInteraction
 ): Promise<void> {
-  if (interaction.user.id !== AUTHORIZED_USER_ID) {
+  if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
     await interaction.reply({
       content: "Você não tem permissão para usar este comando.",
       ephemeral: true,
@@ -42,11 +40,11 @@ export async function handleSolicitarFuncional(
   }
 
   const embed = new EmbedBuilder()
-    .setTitle("📋 Solicitação Funcional — PMRP")
+    .setTitle("📋 Solicitação Funcional")
     .setDescription(
       "Clique no botão abaixo para solicitar sua graduação.\n\n" +
       "Você precisará informar seu **nome completo** e **RG**.\n" +
-      "Após o envio, um administrador irá analisar sua solicitação."
+      "Após o envio, alguém do RH irá analisar sua solicitação."
     )
     .setColor(0x3498db);
 
@@ -190,7 +188,7 @@ export async function handleSelectGraduacao(
         inline: true,
       },
       {
-        name: "🏷️ Apelido resultante",
+        name: "🏷️ Novo apelido",
         value: `\`${nickFormatado}\``,
         inline: false,
       }
