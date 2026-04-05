@@ -23,6 +23,11 @@ const commands = [
     .setName("avaliar-estagio")
     .setDescription("Publica o painel de avaliação de estagiários")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("rso")
+    .setDescription("Publica o painel de gerenciamento de RSO")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
