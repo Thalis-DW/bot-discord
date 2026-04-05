@@ -18,6 +18,11 @@ const commands = [
     .setName("ticket")
     .setDescription("Publica o painel de abertura de tickets do RH")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("avaliar-estagio")
+    .setDescription("Publica o painel de avaliação de estagiários")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);

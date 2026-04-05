@@ -22,6 +22,12 @@ import {
   handleBtnNotificarMembro,
   handleModalEncerrarTicket,
 } from "./commands/ticket";
+import {
+  handleAvaliarEstagio,
+  handleBtnAvaliarEstagio,
+  handleSelectAvaliarUsuario,
+  handleModalAvaliarEstagio,
+} from "./commands/avaliar-estagio";
 
 dotenv.config();
 
@@ -52,6 +58,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleSolicitarFuncional(interaction);
       } else if (interaction.commandName === "ticket") {
         await handleTicket(interaction);
+      } else if (interaction.commandName === "avaliar-estagio") {
+        await handleAvaliarEstagio(interaction);
       }
       return;
     }
@@ -68,6 +76,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleModalEncerrarTicket(interaction, openerUserId);
       } else if (interaction.customId === "modal_renomear_ticket") {
         await handleModalRenomearTicket(interaction);
+      } else if (interaction.customId === "modal_avaliar_estagio") {
+        await handleModalAvaliarEstagio(interaction);
       }
       return;
     }
@@ -86,6 +96,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
     if (interaction.isUserSelectMenu()) {
       if (interaction.customId === "select_add_membro_ticket") {
         await handleSelectAddMembroTicket(interaction);
+      } else if (interaction.customId === "select_avaliar_usuario") {
+        await handleSelectAvaliarUsuario(interaction);
       }
       return;
     }
@@ -103,6 +115,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
       } else if (interaction.customId.startsWith("encerrar_ticket:")) {
         const [, userId] = interaction.customId.split(":");
         await handleBtnEncerrarTicket(interaction, userId);
+      } else if (interaction.customId === "btn_avaliar_estagio") {
+        await handleBtnAvaliarEstagio(interaction);
       } else if (interaction.customId === "add_membro_ticket") {
         await handleBtnAddMembro(interaction);
       } else if (interaction.customId === "renomear_ticket") {
