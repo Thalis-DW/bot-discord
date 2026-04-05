@@ -10,6 +10,18 @@ import {
   handleBtnAprovar,
   handleBtnRecusar,
 } from "./commands/solicitar-funcional";
+import {
+  handleTicket,
+  handleSelectTicketTipo,
+  handleModalTicketResumo,
+  handleBtnEncerrarTicket,
+  handleBtnAddMembro,
+  handleSelectAddMembroTicket,
+  handleBtnRenomearTicket,
+  handleModalRenomearTicket,
+  handleBtnNotificarMembro,
+  handleModalEncerrarTicket,
+} from "./commands/ticket";
 
 dotenv.config();
 
@@ -38,22 +50,42 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         });
       } else if (interaction.commandName === "solicitar-funcional") {
         await handleSolicitarFuncional(interaction);
+      } else if (interaction.commandName === "ticket") {
+        await handleTicket(interaction);
       }
       return;
     }
 
-    // Modal
+    // Modais
     if (interaction.isModalSubmit()) {
       if (interaction.customId === "modal_solicitar_funcional") {
         await handleModalSolicitarFuncional(interaction);
+      } else if (interaction.customId.startsWith("modal_ticket_resumo:")) {
+        const [, tipo] = interaction.customId.split(":");
+        await handleModalTicketResumo(interaction, tipo);
+      } else if (interaction.customId.startsWith("modal_encerrar_ticket:")) {
+        const [, openerUserId] = interaction.customId.split(":");
+        await handleModalEncerrarTicket(interaction, openerUserId);
+      } else if (interaction.customId === "modal_renomear_ticket") {
+        await handleModalRenomearTicket(interaction);
       }
       return;
     }
 
-    // Select menu
+    // String select menus
     if (interaction.isStringSelectMenu()) {
       if (interaction.customId === "select_graduacao") {
         await handleSelectGraduacao(interaction);
+      } else if (interaction.customId === "select_ticket_tipo") {
+        await handleSelectTicketTipo(interaction);
+      }
+      return;
+    }
+
+    // User select menus
+    if (interaction.isUserSelectMenu()) {
+      if (interaction.customId === "select_add_membro_ticket") {
+        await handleSelectAddMembroTicket(interaction);
       }
       return;
     }
@@ -68,6 +100,16 @@ client.on("interactionCreate", async (interaction: Interaction) => {
       } else if (interaction.customId.startsWith("recusar:")) {
         const [, userId] = interaction.customId.split(":");
         await handleBtnRecusar(interaction, userId);
+      } else if (interaction.customId.startsWith("encerrar_ticket:")) {
+        const [, userId] = interaction.customId.split(":");
+        await handleBtnEncerrarTicket(interaction, userId);
+      } else if (interaction.customId === "add_membro_ticket") {
+        await handleBtnAddMembro(interaction);
+      } else if (interaction.customId === "renomear_ticket") {
+        await handleBtnRenomearTicket(interaction);
+      } else if (interaction.customId.startsWith("notificar_membro:")) {
+        const [, userId] = interaction.customId.split(":");
+        await handleBtnNotificarMembro(interaction, userId);
       }
     }
   } catch (error) {

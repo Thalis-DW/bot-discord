@@ -13,6 +13,11 @@ const commands = [
     .setName("solicitar-funcional")
     .setDescription("Solicita a atribuição de uma graduação policial")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("ticket")
+    .setDescription("Publica o painel de abertura de tickets do RH")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
