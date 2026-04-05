@@ -5,6 +5,7 @@ import {
   ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  MessageFlags,
   ModalBuilder,
   ModalSubmitInteraction,
   StringSelectMenuBuilder,
@@ -34,7 +35,7 @@ export async function handleSolicitarFuncional(
   if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
     await interaction.reply({
       content: "Você não tem permissão para usar este comando.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -129,7 +130,7 @@ export async function handleModalSolicitarFuncional(
     components: [
       new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select),
     ],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
 
@@ -242,7 +243,7 @@ export async function handleBtnAprovar(
 ): Promise<void> {
   const rank = RANKS.find((r) => r.value === rankValue);
   if (!rank) {
-    await interaction.reply({ content: "Graduação inválida.", ephemeral: true });
+    await interaction.reply({ content: "Graduação inválida.", flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -252,7 +253,7 @@ export async function handleBtnAprovar(
   if (!member) {
     await interaction.reply({
       content: "Usuário não encontrado no servidor.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -282,7 +283,7 @@ export async function handleBtnAprovar(
   if (!role) {
     await interaction.reply({
       content: `Cargo \`${rank.roleName}\` não existe no servidor. Crie o cargo e tente novamente.`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }

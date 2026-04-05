@@ -7,6 +7,7 @@ import {
   ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  MessageFlags,
   ModalBuilder,
   ModalSubmitInteraction,
   PermissionFlagsBits,
@@ -56,7 +57,7 @@ export async function handleTicket(
   if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
     await interaction.reply({
       content: "Você não tem permissão para usar este comando.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -106,7 +107,7 @@ export async function handleSelectTicketTipo(
   const tipoInfo = TICKET_TIPOS[tipo];
 
   if (!tipoInfo) {
-    await interaction.reply({ content: "Tipo inválido.", ephemeral: true });
+    await interaction.reply({ content: "Tipo inválido.", flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -138,11 +139,11 @@ export async function handleModalTicketResumo(
 ): Promise<void> {
   const tipoInfo = TICKET_TIPOS[tipo];
   if (!tipoInfo) {
-    await interaction.reply({ content: "Tipo inválido.", ephemeral: true });
+    await interaction.reply({ content: "Tipo inválido.", flags: MessageFlags.Ephemeral });
     return;
   }
 
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const guild = interaction.guild!;
   const resumo = interaction.fields.getTextInputValue("input_resumo").trim();
@@ -330,7 +331,7 @@ export async function handleBtnAddMembro(
     components: [
       new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(select),
     ],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
 
@@ -405,7 +406,7 @@ export async function handleModalRenomearTicket(
 
   await interaction.reply({
     content: `✅ Canal renomeado de \`${nomeAnterior}\` para \`${novoNome}\`.`,
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 
   logger.info("Ticket renomeado", {
@@ -428,7 +429,7 @@ export async function handleBtnNotificarMembro(
   if (!opener) {
     await interaction.reply({
       content: "Usuário não encontrado no servidor.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -445,7 +446,7 @@ export async function handleBtnNotificarMembro(
     content: enviado
       ? `✅ <@${openerUserId}> foi notificado no privado.`
       : `⚠️ Não foi possível enviar DM para <@${openerUserId}> (DMs desativadas).`,
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 
   logger.info("Membro notificado via DM", {

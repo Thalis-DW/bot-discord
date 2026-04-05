@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Interaction } from "discord.js";
+import { Client, GatewayIntentBits, Interaction, MessageFlags } from "discord.js";
 import * as dotenv from "dotenv";
 import { connectDatabase } from "./database";
 import { logger } from "./logger";
@@ -129,13 +129,15 @@ client.on("interactionCreate", async (interaction: Interaction) => {
   } catch (error) {
     logger.error("Erro ao processar interação", { error: String(error) });
 
-    if (
-      interaction.isRepliable() &&
-      !interaction.replied &&
-      !interaction.deferred
-    ) {
+    if (!interaction.isRepliable()) return;
+
+    if (interaction.deferred && !interaction.replied) {
       await interaction
-        .reply({ content: "Ocorreu um erro. Tente novamente.", ephemeral: true })
+        .editReply({ content: "Ocorreu um erro. Tente novamente." })
+        .catch(() => null);
+    } else if (!interaction.replied) {
+      await interaction
+        .reply({ content: "Ocorreu um erro. Tente novamente.", flags: MessageFlags.Ephemeral })
         .catch(() => null);
     }
   }

@@ -7,6 +7,7 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   Guild,
+  MessageFlags,
   ModalBuilder,
   ModalSubmitInteraction,
   TextChannel,
@@ -60,7 +61,7 @@ export async function handleAvaliarEstagio(
   if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
     await interaction.reply({
       content: "Você não tem permissão para usar este comando.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -107,7 +108,7 @@ export async function handleBtnAvaliarEstagio(
     components: [
       new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(select),
     ],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
 
@@ -158,14 +159,14 @@ export async function handleModalAvaliarEstagio(
   if (!avaliadoId) {
     await interaction.reply({
       content: "Sessão expirada. Clique no botão novamente.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
 
   pendingAvaliacoes.delete(interaction.user.id);
 
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const guild     = interaction.guild!;
   const avaliacao = interaction.fields.getTextInputValue("input_avaliacao").trim();
@@ -204,8 +205,8 @@ export async function handleModalAvaliarEstagio(
       .setTitle("📋 Nova Avaliação de Estágio")
       .setColor(0x2ecc71)
       .addFields(
-        { name: "🔍 Avaliado",          value: avaliadoNick,  inline: true },
-        { name: "👤 Avaliador",          value: avaliadorNick, inline: true },
+        { name: "🔍 Avaliado",          value: `<@${avaliadoId}>`,  inline: true },
+        { name: "👤 Avaliador",          value: `<@${interaction.user.id}>`, inline: true },
         { name: "📝 Avaliação",          value: avaliacao,     inline: false },
         { name: "⚠️ Ponto de Atenção", value: pontoAtencao,  inline: false }
       )
