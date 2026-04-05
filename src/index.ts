@@ -28,6 +28,23 @@ import {
   handleSelectAvaliarUsuario,
   handleModalAvaliarEstagio,
 } from "./commands/avaliar-estagio";
+import {
+  handleRso,
+  handleBtnAbrirRso,
+  handleModalRsoViatura,
+  handleSelectRsoMotorista,
+  handleSelectRsoComandante,
+  handleSelectRsoAuxiliares,
+  handleBtnRsoConfirmarEquipe,
+  handleModalRsoObs,
+  handleBtnFecharRso,
+  handleBtnAdicionarApreensoes,
+  handleSelectTipoApreensao,
+  handleModalValorApreensao,
+  handleBtnEditarRso,
+  handleModalEditarRso,
+  handleBtnContarRsos,
+} from "./commands/rso";
 
 dotenv.config();
 
@@ -40,7 +57,7 @@ const client = new Client({
   ],
 });
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   logger.info(`Bot online como ${client.user?.tag}`);
 });
 
@@ -60,6 +77,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleTicket(interaction);
       } else if (interaction.commandName === "avaliar-estagio") {
         await handleAvaliarEstagio(interaction);
+      } else if (interaction.commandName === "rso") {
+        await handleRso(interaction);
       }
       return;
     }
@@ -78,6 +97,15 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleModalRenomearTicket(interaction);
       } else if (interaction.customId === "modal_avaliar_estagio") {
         await handleModalAvaliarEstagio(interaction);
+      } else if (interaction.customId === "modal_rso_viatura") {
+        await handleModalRsoViatura(interaction);
+      } else if (interaction.customId === "modal_rso_obs") {
+        await handleModalRsoObs(interaction);
+      } else if (interaction.customId === "modal_editar_rso") {
+        await handleModalEditarRso(interaction);
+      } else if (interaction.customId.startsWith("modal_valor_apreensao:")) {
+        const [, tipo] = interaction.customId.split(":");
+        await handleModalValorApreensao(interaction, tipo);
       }
       return;
     }
@@ -88,6 +116,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleSelectGraduacao(interaction);
       } else if (interaction.customId === "select_ticket_tipo") {
         await handleSelectTicketTipo(interaction);
+      } else if (interaction.customId === "select_tipo_apreensao") {
+        await handleSelectTipoApreensao(interaction);
       }
       return;
     }
@@ -98,6 +128,12 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleSelectAddMembroTicket(interaction);
       } else if (interaction.customId === "select_avaliar_usuario") {
         await handleSelectAvaliarUsuario(interaction);
+      } else if (interaction.customId === "select_rso_motorista") {
+        await handleSelectRsoMotorista(interaction);
+      } else if (interaction.customId === "select_rso_comandante") {
+        await handleSelectRsoComandante(interaction);
+      } else if (interaction.customId === "select_rso_auxiliares") {
+        await handleSelectRsoAuxiliares(interaction);
       }
       return;
     }
@@ -117,6 +153,18 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleBtnEncerrarTicket(interaction, userId);
       } else if (interaction.customId === "btn_avaliar_estagio") {
         await handleBtnAvaliarEstagio(interaction);
+      } else if (interaction.customId === "btn_abrir_rso") {
+        await handleBtnAbrirRso(interaction);
+      } else if (interaction.customId === "btn_fechar_rso") {
+        await handleBtnFecharRso(interaction);
+      } else if (interaction.customId === "btn_adicionar_apreensoes") {
+        await handleBtnAdicionarApreensoes(interaction);
+      } else if (interaction.customId === "btn_editar_rso") {
+        await handleBtnEditarRso(interaction);
+      } else if (interaction.customId === "btn_rso_confirmar_equipe") {
+        await handleBtnRsoConfirmarEquipe(interaction);
+      } else if (interaction.customId === "btn_contar_rsos") {
+        await handleBtnContarRsos(interaction);
       } else if (interaction.customId === "add_membro_ticket") {
         await handleBtnAddMembro(interaction);
       } else if (interaction.customId === "renomear_ticket") {
