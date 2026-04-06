@@ -29,6 +29,11 @@ import {
   handleModalAvaliarEstagio,
 } from "./commands/avaliar-estagio";
 import {
+  handleEmitirConvocacao,
+  handleBtnEmitirConvocacao,
+  handleModalEmitirConvocacao,
+} from "./commands/emitir-convocacao";
+import {
   handleRso,
   handleBtnAbrirRso,
   handleModalRsoViatura,
@@ -87,6 +92,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleRso(interaction);
       } else if (interaction.commandName === "registro-atividade-rso") {
         await handleRegistroAtividadeRso(interaction);
+      } else if (interaction.commandName === "emitir-convocacao") {
+        await handleEmitirConvocacao(interaction);
       }
       return;
     }
@@ -107,6 +114,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleModalAvaliarEstagio(interaction);
       } else if (interaction.customId === "modal_rso_viatura") {
         await handleModalRsoViatura(interaction);
+      } else if (interaction.customId === "modal_emitir_convocacao") {
+        await handleModalEmitirConvocacao(interaction);
       } else if (interaction.customId === "modal_rso_obs") {
         await handleModalRsoObs(interaction);
       } else if (interaction.customId === "modal_editar_rso") {
@@ -154,7 +163,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
     // Botões
     if (interaction.isButton()) {
-      if (interaction.customId === "btn_abrir_funcional") {
+      if (interaction.customId === "btn_emitir_convocacao") {
+        await handleBtnEmitirConvocacao(interaction);
+      } else if (interaction.customId === "btn_abrir_funcional") {
         await handleBtnAbrirFuncional(interaction);
       } else if (interaction.customId.startsWith("aprovar:")) {
         const [, userId, rankValue] = interaction.customId.split(":");
