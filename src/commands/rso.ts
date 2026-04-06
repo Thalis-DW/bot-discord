@@ -37,11 +37,11 @@ interface IRSO extends Document {
   userId: string;
   userNick: string;
   viatura: string;
-  motoristaId: string;
-  comandanteId: string;
-  auxiliar1Id: string;
-  auxiliar2Id: string;
-  auxiliar3Id: string;
+  motoristaIds: string[];
+  comandanteIds: string[];
+  auxiliar1Ids: string[];
+  auxiliar2Ids: string[];
+  auxiliar3Ids: string[];
   observacoes: string;
   inicio: Date;
   fim?: Date;
@@ -53,14 +53,14 @@ interface IRSO extends Document {
 }
 
 const rsoSchema = new Schema<IRSO>({
-  userId:       { type: String, required: true },
-  userNick:     { type: String, required: true },
-  viatura:      { type: String, required: true },
-  motoristaId:  { type: String, required: true },
-  comandanteId: { type: String, required: true },
-  auxiliar1Id:  { type: String, default: "" },
-  auxiliar2Id:  { type: String, default: "" },
-  auxiliar3Id:  { type: String, default: "" },
+  userId:        { type: String,   required: true },
+  userNick:      { type: String,   required: true },
+  viatura:       { type: String,   required: true },
+  motoristaIds:  { type: [String], required: true },
+  comandanteIds: { type: [String], required: true },
+  auxiliar1Ids:  { type: [String], default: [] },
+  auxiliar2Ids:  { type: [String], default: [] },
+  auxiliar3Ids:  { type: [String], default: [] },
   observacoes:  { type: String, default: "" },
   inicio:       { type: Date, required: true },
   fim:          { type: Date },
@@ -83,10 +83,14 @@ const RSO = mongoose.model<IRSO>("RSO", rsoSchema);
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
-const CANAL_RSO                = "📋・rso";
-const CANAL_SOLICITAR_CONTAGEM = "📠・solicitar-contagem-rso";
-const CANAL_RELATORIO          = "📒・relatorio-semanal";
-const TITULO_PAINEL_CONTAGEM   = "📊 Solicitar Contagem de RSO's";
+const CANAL_RSO                  = "📋・rso";
+const CANAL_SOLICITAR_CONTAGEM   = "📠・solicitar-contagem-rso";
+const CANAL_RELATORIO            = "📒・relatorio-semanal";
+const TITULO_PAINEL_CONTAGEM     = "📊 Solicitar Contagem de RSO's";
+const CANAL_REGISTRO_ATIVIDADE   = "🏛️・registro-de-atividade-rso";
+const ROLE_POLICIAL              = "👮🏻‍♀️| Policial Militar";
+const ROLE_AUSENCIA              = "Ausencia";
+const TITULO_REGISTRO_ATIVIDADE  = "📊 Registro de Atividade RSO";
 
 const APREENSOES_INFO: Record<string, { label: string; emoji: string }> = {
   armasFogo:              { label: "Armas de fogo",            emoji: "🔫" },
@@ -110,6 +114,14 @@ interface PendingRsoAbrir {
 
 const pendingRsoAbrir = new Map<string, PendingRsoAbrir>();
 
+interface PendingRsoEditar {
+  motoristaId: string;
+  comandanteId: string;
+  auxiliarIds: string[];
+}
+
+const pendingRsoEditar = new Map<string, PendingRsoEditar>();
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatHora(date: Date): string {
@@ -120,8 +132,9 @@ function formatHora(date: Date): string {
   });
 }
 
-function mem(id: string): string {
-  return id ? `<@${id}>` : "—";
+function memArr(ids: string[]): string {
+  const filtered = ids.filter(Boolean);
+  return filtered.length ? filtered.map((id) => `<@${id}>`).join(" | ") : "—";
 }
 
 function formatarCorpoRso(rso: IRSO): string {
@@ -129,11 +142,11 @@ function formatarCorpoRso(rso: IRSO): string {
   return [
     `Viatura: ${rso.viatura}`,
     "",
-    `Motorista: ${mem(rso.motoristaId)}`,
-    `Comandante de equipe: ${mem(rso.comandanteId)}`,
-    `1° Auxiliar: ${mem(rso.auxiliar1Id)}`,
-    `2° Auxiliar: ${mem(rso.auxiliar2Id)}`,
-    `3° Auxiliar: ${mem(rso.auxiliar3Id)}`,
+    `Motorista: ${memArr(rso.motoristaIds)}`,
+    `Comandante de equipe: ${memArr(rso.comandanteIds)}`,
+    `1° Auxiliar: ${memArr(rso.auxiliar1Ids)}`,
+    `2° Auxiliar: ${memArr(rso.auxiliar2Ids)}`,
+    `3° Auxiliar: ${memArr(rso.auxiliar3Ids)}`,
     "",
     `Início: ${formatHora(rso.inicio)}`,
     `Fim: ${rso.fim ? formatHora(rso.fim) : "—"}`,
@@ -405,15 +418,15 @@ export async function handleModalRsoObs(
   const obs     = interaction.fields.getTextInputValue("input_obs").trim();
 
   const rsoDoc = await RSO.create({
-    userId:       interaction.user.id,
-    userNick:     member?.nickname ?? interaction.user.username,
-    viatura:      pending.viatura,
-    motoristaId:  pending.motoristaId,
-    comandanteId: pending.comandanteId,
-    auxiliar1Id:  pending.auxiliar1Id,
-    auxiliar2Id:  pending.auxiliar2Id,
-    auxiliar3Id:  pending.auxiliar3Id,
-    observacoes:  obs,
+    userId:        interaction.user.id,
+    userNick:      member?.nickname ?? interaction.user.username,
+    viatura:       pending.viatura,
+    motoristaIds:  [pending.motoristaId],
+    comandanteIds: [pending.comandanteId],
+    auxiliar1Ids:  pending.auxiliar1Id ? [pending.auxiliar1Id] : [],
+    auxiliar2Ids:  pending.auxiliar2Id ? [pending.auxiliar2Id] : [],
+    auxiliar3Ids:  pending.auxiliar3Id ? [pending.auxiliar3Id] : [],
+    observacoes:   obs,
     inicio:       new Date(),
     apreensoes: {
       armasFogo: 0, armaBranca: 0, municoes: 0,
@@ -460,6 +473,7 @@ export async function handleBtnFecharRso(
   await rso.save();
 
   await atualizarMensagemRso(interaction.guild!, rso);
+  await atualizarRegistroAtividade(interaction.guild!);
   await interaction.editReply({ content: "✅ RSO encerrado com sucesso!" });
 
   logger.info("RSO encerrado", { user: interaction.user.tag, viatura: rso.viatura });
@@ -571,9 +585,172 @@ export async function handleModalValorApreensao(
   logger.info("Apreensão adicionada", { tipo: info.label, valor, user: interaction.user.tag });
 }
 
-// ─── 5. Botão "Editar RSO" → modal com obs atual pré-preenchida ───────────────
+// ─── 5. Botão "Editar RSO" → exibe seletores de substituição de equipe ────────
 
 export async function handleBtnEditarRso(
+  interaction: ButtonInteraction
+): Promise<void> {
+  const rso = await RSO.findOne({ userId: interaction.user.id, status: "aberto" });
+  if (!rso) {
+    await interaction.reply({
+      content: "⚠️ Você não possui nenhum RSO aberto.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  pendingRsoEditar.set(interaction.user.id, {
+    motoristaId:  "",
+    comandanteId: "",
+    auxiliarIds:  [],
+  });
+
+  const rowMotorista = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
+    new UserSelectMenuBuilder()
+      .setCustomId("select_rso_editar_motorista")
+      .setPlaceholder("Substituir Motorista (opcional)...")
+      .setMinValues(0)
+      .setMaxValues(1)
+  );
+
+  const rowComandante = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
+    new UserSelectMenuBuilder()
+      .setCustomId("select_rso_editar_comandante")
+      .setPlaceholder("Substituir Comandante de equipe (opcional)...")
+      .setMinValues(0)
+      .setMaxValues(1)
+  );
+
+  const rowAuxiliares = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
+    new UserSelectMenuBuilder()
+      .setCustomId("select_rso_editar_auxiliares")
+      .setPlaceholder("Adicionar substituto(s) de auxiliar (1°→2°→3°, opcional)...")
+      .setMinValues(0)
+      .setMaxValues(3)
+  );
+
+  const rowBotoes = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId("btn_rso_editar_confirmar")
+      .setLabel("Confirmar substituição")
+      .setStyle(ButtonStyle.Success)
+      .setEmoji("✅"),
+    new ButtonBuilder()
+      .setCustomId("btn_rso_editar_obs")
+      .setLabel("Editar observações")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji("✏️"),
+  );
+
+  await interaction.reply({
+    content:
+      "Selecione quem substitui cada posição (deixe em branco o que não mudar) e clique em **Confirmar substituição**.\n" +
+      "Para editar só as observações, clique em **Editar observações**.",
+    components: [rowMotorista, rowComandante, rowAuxiliares, rowBotoes],
+    flags: MessageFlags.Ephemeral,
+  });
+}
+
+// ─── 5b. Selects de substituição de equipe ────────────────────────────────────
+
+export async function handleSelectRsoEditarMotorista(
+  interaction: UserSelectMenuInteraction
+): Promise<void> {
+  const pending = pendingRsoEditar.get(interaction.user.id);
+  if (pending) pending.motoristaId = interaction.values[0] ?? "";
+  await interaction.deferUpdate();
+}
+
+export async function handleSelectRsoEditarComandante(
+  interaction: UserSelectMenuInteraction
+): Promise<void> {
+  const pending = pendingRsoEditar.get(interaction.user.id);
+  if (pending) pending.comandanteId = interaction.values[0] ?? "";
+  await interaction.deferUpdate();
+}
+
+export async function handleSelectRsoEditarAuxiliares(
+  interaction: UserSelectMenuInteraction
+): Promise<void> {
+  const pending = pendingRsoEditar.get(interaction.user.id);
+  if (pending) pending.auxiliarIds = interaction.values;
+  await interaction.deferUpdate();
+}
+
+// ─── 5c. Confirmar substituição de equipe ────────────────────────────────────
+
+export async function handleBtnRsoEditarConfirmar(
+  interaction: ButtonInteraction
+): Promise<void> {
+  const pending = pendingRsoEditar.get(interaction.user.id);
+
+  if (!pending) {
+    await interaction.reply({
+      content: "Sessão expirada. Clique em **Editar RSO** novamente.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  if (!pending.motoristaId && !pending.comandanteId && pending.auxiliarIds.length === 0) {
+    await interaction.reply({
+      content: "⚠️ Nenhuma substituição selecionada.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  pendingRsoEditar.delete(interaction.user.id);
+  await interaction.deferUpdate();
+
+  const rso = await RSO.findOne({ userId: interaction.user.id, status: "aberto" });
+  if (!rso) {
+    await interaction.followUp({ content: "⚠️ Nenhum RSO aberto encontrado.", flags: MessageFlags.Ephemeral });
+    return;
+  }
+
+  if (pending.motoristaId && !rso.motoristaIds.includes(pending.motoristaId)) {
+    rso.motoristaIds.push(pending.motoristaId);
+    rso.markModified("motoristaIds");
+  }
+
+  if (pending.comandanteId && !rso.comandanteIds.includes(pending.comandanteId)) {
+    rso.comandanteIds.push(pending.comandanteId);
+    rso.markModified("comandanteIds");
+  }
+
+  // Distribui substitutos de auxiliar nos slots 1→2→3 na ordem selecionada
+  const auxSlots: { field: "auxiliar1Ids" | "auxiliar2Ids" | "auxiliar3Ids"; ids: string[] }[] = [
+    { field: "auxiliar1Ids", ids: rso.auxiliar1Ids },
+    { field: "auxiliar2Ids", ids: rso.auxiliar2Ids },
+    { field: "auxiliar3Ids", ids: rso.auxiliar3Ids },
+  ];
+
+  const jaPresentes = new Set([...rso.auxiliar1Ids, ...rso.auxiliar2Ids, ...rso.auxiliar3Ids]);
+
+  let slotIdx = 0;
+  for (const auxId of pending.auxiliarIds) {
+    if (jaPresentes.has(auxId)) continue;
+    while (slotIdx < 3) {
+      auxSlots[slotIdx].ids.push(auxId);
+      rso.markModified(auxSlots[slotIdx].field);
+      slotIdx++;
+      break;
+    }
+  }
+
+  await rso.save();
+  await atualizarMensagemRso(interaction.guild!, rso);
+  await atualizarRegistroAtividade(interaction.guild!);
+
+  await interaction.editReply({ content: "✅ Equipe atualizada com sucesso!", components: [] });
+
+  logger.info("Equipe do RSO atualizada", { user: interaction.user.tag });
+}
+
+// ─── 5d. Botão "Editar observações" → abre modal com obs atual ───────────────
+
+export async function handleBtnRsoEditarObs(
   interaction: ButtonInteraction
 ): Promise<void> {
   const rso = await RSO.findOne({ userId: interaction.user.id, status: "aberto" });
@@ -604,7 +781,7 @@ export async function handleBtnEditarRso(
   await interaction.showModal(modal);
 }
 
-// ─── 5b. Modal editar → atualiza obs e mensagem ───────────────────────────────
+// ─── 5e. Modal editar obs → atualiza observações e mensagem ──────────────────
 
 export async function handleModalEditarRso(
   interaction: ModalSubmitInteraction
@@ -625,7 +802,7 @@ export async function handleModalEditarRso(
   await atualizarMensagemRso(interaction.guild!, rso);
   await interaction.editReply({ content: "✅ Observações do RSO atualizadas!" });
 
-  logger.info("RSO editado", { user: interaction.user.tag });
+  logger.info("Observações do RSO editadas", { user: interaction.user.tag });
 }
 
 // ─── 6. Botão "Contar RSO's" → soma apreensões e envia relatório ──────────────
@@ -695,6 +872,120 @@ export async function handleBtnContarRsos(
   });
 
   logger.info("RSOs contados", { count: rsos.length, contadoPor: interaction.user.tag });
+}
+
+// ─── 7. Comando /registro-atividade-rso ──────────────────────────────────────
+
+export async function handleRegistroAtividadeRso(
+  interaction: ChatInputCommandInteraction
+): Promise<void> {
+  if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
+    await interaction.reply({
+      content: "Você não tem permissão para usar este comando.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  await atualizarRegistroAtividade(interaction.guild!);
+  await interaction.editReply({ content: "✅ Painel de registro de atividade publicado!" });
+
+  logger.info("Painel de registro de atividade RSO publicado", {
+    canal: interaction.channelId,
+    guild: interaction.guild?.name,
+  });
+}
+
+// ─── Atualiza (ou cria) a mensagem fixa de registro de atividade ──────────────
+
+async function atualizarRegistroAtividade(guild: Guild): Promise<void> {
+  const canal = guild.channels.cache.find(
+    (c) => c.name === CANAL_REGISTRO_ATIVIDADE
+  ) as TextChannel | undefined;
+  if (!canal) return;
+
+  // Intervalo do mês vigente (UTC)
+  const agora     = new Date();
+  const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+  const fimMes    = new Date(agora.getFullYear(), agora.getMonth() + 1, 1);
+
+  const rsos = await RSO.find({
+    inicio: { $gte: inicioMes, $lt: fimMes },
+  }).catch(() => [] as IRSO[]);
+
+  // Monta mapa userId → Set de dias-do-mês patrulhados
+  const diasPorUsuario = new Map<string, Set<number>>();
+
+  for (const rso of rsos) {
+    const dia = rso.inicio.getDate();
+    const participantes = [
+      ...rso.motoristaIds,
+      ...rso.comandanteIds,
+      ...rso.auxiliar1Ids,
+      ...rso.auxiliar2Ids,
+      ...rso.auxiliar3Ids,
+    ].filter(Boolean);
+
+    for (const id of participantes) {
+      if (!diasPorUsuario.has(id)) diasPorUsuario.set(id, new Set());
+      diasPorUsuario.get(id)!.add(dia);
+    }
+  }
+
+  // Filtra membros com cargo policial e sem ausência
+  await guild.members.fetch().catch(() => null);
+  const policiais = guild.members.cache.filter(
+    (m) =>
+      m.roles.cache.some((r) => r.name === ROLE_POLICIAL) &&
+      !m.roles.cache.some((r) => r.name === ROLE_AUSENCIA)
+  );
+
+  const mesNome  = agora.toLocaleString("pt-BR", { month: "long", timeZone: "America/Sao_Paulo" });
+  const anoAtual = agora.getFullYear();
+
+  let descricao: string;
+
+  if (policiais.size === 0) {
+    descricao = "Nenhum policial ativo encontrado.";
+  } else {
+    const linhas = [...policiais.values()]
+      .map((m) => {
+        const dias = diasPorUsuario.get(m.id)?.size ?? 0;
+        const nick = m.nickname ?? m.user.username;
+        return { nick, dias };
+      })
+      .sort((a, b) => b.dias - a.dias || a.nick.localeCompare(b.nick))
+      .map(({ nick, dias }) => {
+        const label = dias === 1 ? "dia" : "dias";
+        return `👮 **${nick}** — ${dias} ${label}`;
+      });
+
+    descricao =
+      `Dias patrulhados no mês de **${mesNome}/${anoAtual}**:\n\n` +
+      linhas.join("\n");
+  }
+
+  const embed = new EmbedBuilder()
+    .setTitle(TITULO_REGISTRO_ATIVIDADE)
+    .setDescription(descricao)
+    .setColor(0x3498db)
+    .setTimestamp()
+    .setFooter({ text: "Atualizado automaticamente ao encerrar RSO" });
+
+  const msgs       = await canal.messages.fetch({ limit: 50 }).catch(() => null);
+  const existente  = msgs?.find(
+    (m) =>
+      m.author.id === canal.client.user!.id &&
+      m.embeds[0]?.title === TITULO_REGISTRO_ATIVIDADE
+  );
+
+  const payload = { embeds: [embed] };
+  if (existente) {
+    await existente.edit(payload).catch(() => null);
+  } else {
+    await canal.send(payload).catch(() => null);
+  }
 }
 
 // ─── Publica/atualiza o painel de contagem em solicitar-contagem-rso ──────────
