@@ -33,6 +33,11 @@ const commands = [
     .setName("registro-atividade-rso")
     .setDescription("Publica o painel de registro de atividade RSO dos policiais")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("emitir-convocacao")
+    .setDescription("Publica o painel de emissão de convocações da Força Tática")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
