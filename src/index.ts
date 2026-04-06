@@ -42,8 +42,14 @@ import {
   handleSelectTipoApreensao,
   handleModalValorApreensao,
   handleBtnEditarRso,
+  handleSelectRsoEditarMotorista,
+  handleSelectRsoEditarComandante,
+  handleSelectRsoEditarAuxiliares,
+  handleBtnRsoEditarConfirmar,
+  handleBtnRsoEditarObs,
   handleModalEditarRso,
   handleBtnContarRsos,
+  handleRegistroAtividadeRso,
 } from "./commands/rso";
 
 dotenv.config();
@@ -79,6 +85,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleAvaliarEstagio(interaction);
       } else if (interaction.commandName === "rso") {
         await handleRso(interaction);
+      } else if (interaction.commandName === "registro-atividade-rso") {
+        await handleRegistroAtividadeRso(interaction);
       }
       return;
     }
@@ -134,6 +142,12 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleSelectRsoComandante(interaction);
       } else if (interaction.customId === "select_rso_auxiliares") {
         await handleSelectRsoAuxiliares(interaction);
+      } else if (interaction.customId === "select_rso_editar_motorista") {
+        await handleSelectRsoEditarMotorista(interaction);
+      } else if (interaction.customId === "select_rso_editar_comandante") {
+        await handleSelectRsoEditarComandante(interaction);
+      } else if (interaction.customId === "select_rso_editar_auxiliares") {
+        await handleSelectRsoEditarAuxiliares(interaction);
       }
       return;
     }
@@ -161,6 +175,10 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleBtnAdicionarApreensoes(interaction);
       } else if (interaction.customId === "btn_editar_rso") {
         await handleBtnEditarRso(interaction);
+      } else if (interaction.customId === "btn_rso_editar_confirmar") {
+        await handleBtnRsoEditarConfirmar(interaction);
+      } else if (interaction.customId === "btn_rso_editar_obs") {
+        await handleBtnRsoEditarObs(interaction);
       } else if (interaction.customId === "btn_rso_confirmar_equipe") {
         await handleBtnRsoConfirmarEquipe(interaction);
       } else if (interaction.customId === "btn_contar_rsos") {
