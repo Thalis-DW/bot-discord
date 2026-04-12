@@ -85,7 +85,7 @@ const RSO = mongoose.model<IRSO>("RSO", rsoSchema);
 
 const CANAL_RSO                  = "📋・rso";
 const CANAL_SOLICITAR_CONTAGEM   = "📠・solicitar-contagem-rso";
-const CANAL_RELATORIO            = "📒・relatorio-semanal";
+const CANAL_RELATORIO            = "📚・relatorio-semanal";
 const TITULO_PAINEL_CONTAGEM     = "📊 Solicitar Contagem de RSO's";
 const CANAL_REGISTRO_ATIVIDADE   = "🏛️・registro-de-atividade-rso";
 const ROLE_POLICIAL              = "👮🏻‍♀️| Policial Militar";
@@ -834,12 +834,17 @@ export async function handleBtnContarRsos(
     totais.dinheiroIlicitos       += rso.apreensoes.dinheiroIlicitos;
   }
 
-  await RSO.updateMany({ status: "fechado", contado: false }, { contado: true });
-
   const guild          = interaction.guild!;
   const canalRelatorio = guild.channels.cache.find(
     (c) => c.name === CANAL_RELATORIO
   ) as TextChannel | undefined;
+
+  if (!canalRelatorio) {
+    await interaction.editReply({
+      content: `⚠️ Canal \`${CANAL_RELATORIO}\` não encontrado. Nenhum RSO foi contabilizado.`,
+    });
+    return;
+  }
 
   const descRelatorio = [
     `Armas de fogo: ${totais.armasFogo}`,
@@ -859,22 +864,52 @@ export async function handleBtnContarRsos(
     .setTimestamp()
     .setFooter({ text: `Gerado por ${interaction.user.tag}` });
 
-  if (canalRelatorio) {
-    await canalRelatorio.send({ embeds: [embedRelatorio] }).catch(() => null);
+  const msgEnviada = await canalRelatorio.send({ embeds: [embedRelatorio] }).catch(() => null);
+
+  if (!msgEnviada) {
+    await interaction.editReply({
+      content: `⚠️ Falha ao enviar o relatório em <#${canalRelatorio.id}>. Nenhum RSO foi contabilizado.`,
+    });
+    return;
   }
 
-  const destino = canalRelatorio
-    ? `<#${canalRelatorio.id}>`
-    : `\`${CANAL_RELATORIO}\` (canal não encontrado)`;
+  await RSO.updateMany({ status: "fechado", contado: false }, { contado: true });
 
   await interaction.editReply({
-    content: `✅ ${rsos.length} RSO(s) contabilizados. Relatório enviado em ${destino}.`,
+    content: `✅ ${rsos.length} RSO(s) contabilizados. Relatório enviado em <#${canalRelatorio.id}>.`,
   });
 
   logger.info("RSOs contados", { count: rsos.length, contadoPor: interaction.user.tag });
 }
 
-// ─── 7. Comando /registro-atividade-rso ──────────────────────────────────────
+// ─── 7. Comando /reset-rso-contado ───────────────────────────────────────────
+
+export async function handleResetRsoContado(
+  interaction: ChatInputCommandInteraction
+): Promise<void> {
+  if (interaction.user.id !== process.env.AUTHORIZED_USER_ID) {
+    await interaction.reply({
+      content: "Você não tem permissão para usar este comando.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const result = await RSO.updateMany({ contado: true }, { $set: { contado: false } });
+
+  await interaction.editReply({
+    content: `✅ ${result.modifiedCount} RSO(s) tiveram \`contado\` resetado para \`false\`.`,
+  });
+
+  logger.info("RSOs resetados (contado=false)", {
+    count: result.modifiedCount,
+    por: interaction.user.tag,
+  });
+}
+
+// ─── 8. Comando /registro-atividade-rso ──────────────────────────────────────
 
 export async function handleRegistroAtividadeRso(
   interaction: ChatInputCommandInteraction

@@ -38,6 +38,11 @@ const commands = [
     .setName("emitir-convocacao")
     .setDescription("Publica o painel de emissão de convocações da Força Tática")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("reset-rso-contado")
+    .setDescription("Reseta o campo contado de todos os RSOs para false (uso único/admin)")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);

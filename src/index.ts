@@ -55,6 +55,7 @@ import {
   handleModalEditarRso,
   handleBtnContarRsos,
   handleRegistroAtividadeRso,
+  handleResetRsoContado,
 } from "./commands/rso";
 
 dotenv.config();
@@ -94,6 +95,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleRegistroAtividadeRso(interaction);
       } else if (interaction.commandName === "emitir-convocacao") {
         await handleEmitirConvocacao(interaction);
+      } else if (interaction.commandName === "reset-rso-contado") {
+        await handleResetRsoContado(interaction);
       }
       return;
     }
