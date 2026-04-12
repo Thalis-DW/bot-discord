@@ -43,6 +43,11 @@ const commands = [
     .setName("reset-rso-contado")
     .setDescription("Reseta o campo contado de todos os RSOs para false (uso único/admin)")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("msg-ausencia")
+    .setDescription("Publica o painel de solicitação de ausência")
+    .toJSON(),
 ];
 
 const rest = new REST().setToken(process.env.DISCORD_TOKEN!);

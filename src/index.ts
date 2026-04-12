@@ -34,6 +34,13 @@ import {
   handleModalEmitirConvocacao,
 } from "./commands/emitir-convocacao";
 import {
+  handleMsgAusencia,
+  handleBtnSolicitarAusencia,
+  handleModalSolicitarAusencia,
+  handleBtnRemoverAusencia,
+  handleSelectRemoverAusencia,
+} from "./commands/ausencia";
+import {
   handleRso,
   handleBtnAbrirRso,
   handleModalRsoViatura,
@@ -97,13 +104,17 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         await handleEmitirConvocacao(interaction);
       } else if (interaction.commandName === "reset-rso-contado") {
         await handleResetRsoContado(interaction);
+      } else if (interaction.commandName === "msg-ausencia") {
+        await handleMsgAusencia(interaction);
       }
       return;
     }
 
     // Modais
     if (interaction.isModalSubmit()) {
-      if (interaction.customId === "modal_solicitar_funcional") {
+      if (interaction.customId === "modal_solicitar_ausencia") {
+        await handleModalSolicitarAusencia(interaction);
+      } else if (interaction.customId === "modal_solicitar_funcional") {
         await handleModalSolicitarFuncional(interaction);
       } else if (interaction.customId.startsWith("modal_ticket_resumo:")) {
         const [, tipo] = interaction.customId.split(":");
@@ -144,7 +155,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
     // User select menus
     if (interaction.isUserSelectMenu()) {
-      if (interaction.customId === "select_add_membro_ticket") {
+      if (interaction.customId === "select_remover_ausencia") {
+        await handleSelectRemoverAusencia(interaction);
+      } else if (interaction.customId === "select_add_membro_ticket") {
         await handleSelectAddMembroTicket(interaction);
       } else if (interaction.customId === "select_avaliar_usuario") {
         await handleSelectAvaliarUsuario(interaction);
@@ -166,7 +179,11 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
     // Botões
     if (interaction.isButton()) {
-      if (interaction.customId === "btn_emitir_convocacao") {
+      if (interaction.customId === "btn_solicitar_ausencia") {
+        await handleBtnSolicitarAusencia(interaction);
+      } else if (interaction.customId === "btn_remover_ausencia") {
+        await handleBtnRemoverAusencia(interaction);
+      } else if (interaction.customId === "btn_emitir_convocacao") {
         await handleBtnEmitirConvocacao(interaction);
       } else if (interaction.customId === "btn_abrir_funcional") {
         await handleBtnAbrirFuncional(interaction);

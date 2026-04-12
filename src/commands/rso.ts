@@ -90,6 +90,7 @@ const TITULO_PAINEL_CONTAGEM     = "📊 Solicitar Contagem de RSO's";
 const CANAL_REGISTRO_ATIVIDADE   = "🏛️・registro-de-atividade-rso";
 const ROLE_POLICIAL              = "👮🏻‍♀️| Policial Militar";
 const ROLE_AUSENCIA              = "Ausencia";
+const ROLE_AUSENCIA_JUSTIFICADA  = "Ausência Justificada";
 const TITULO_REGISTRO_ATIVIDADE  = "📊 Registro de Atividade RSO";
 
 const APREENSOES_INFO: Record<string, { label: string; emoji: string }> = {
@@ -934,7 +935,7 @@ export async function handleRegistroAtividadeRso(
 
 // ─── Atualiza (ou cria) a mensagem fixa de registro de atividade ──────────────
 
-async function atualizarRegistroAtividade(guild: Guild): Promise<void> {
+export async function atualizarRegistroAtividade(guild: Guild): Promise<void> {
   const canal = guild.channels.cache.find(
     (c) => c.name === CANAL_REGISTRO_ATIVIDADE
   ) as TextChannel | undefined;
@@ -968,12 +969,13 @@ async function atualizarRegistroAtividade(guild: Guild): Promise<void> {
     }
   }
 
-  // Filtra membros com cargo policial e sem ausência
+  // Filtra membros com cargo policial e sem ausência (nenhuma das duas tags)
   await guild.members.fetch().catch(() => null);
   const policiais = guild.members.cache.filter(
     (m) =>
       m.roles.cache.some((r) => r.name === ROLE_POLICIAL) &&
-      !m.roles.cache.some((r) => r.name === ROLE_AUSENCIA)
+      !m.roles.cache.some((r) => r.name === ROLE_AUSENCIA) &&
+      !m.roles.cache.some((r) => r.name === ROLE_AUSENCIA_JUSTIFICADA)
   );
 
   const mesNome  = agora.toLocaleString("pt-BR", { month: "long", timeZone: "America/Sao_Paulo" });
