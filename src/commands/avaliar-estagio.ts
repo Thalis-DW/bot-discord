@@ -218,6 +218,7 @@ export async function handleModalAvaliarEstagio(
 
   // Atualiza mensagem fixa com a lista de estagiários e contagens
   await atualizarListaFeitas(interaction, guild);
+  await limparAvaliacoesAntigas();
 
   await interaction.editReply({ content: "✅ Avaliação registrada com sucesso!" });
 
@@ -226,6 +227,20 @@ export async function handleModalAvaliarEstagio(
     avaliado:    avaliadoNick,
     guild:       guild.name,
   });
+}
+
+// ─── Limpeza de avaliações antigas (dia ≥ 15 → apaga mês anterior) ────────────
+
+async function limparAvaliacoesAntigas(): Promise<void> {
+  const agora = new Date();
+  if (agora.getDate() < 15) return;
+
+  const inicioMesAtual = new Date(agora.getFullYear(), agora.getMonth(), 1);
+  const result = await Avaliacao.deleteMany({ createdAt: { $lt: inicioMesAtual } }).catch(() => null);
+
+  if (result && result.deletedCount > 0) {
+    logger.info("Avaliações antigas apagadas automaticamente", { count: result.deletedCount });
+  }
 }
 
 // ─── Atualiza (ou cria) a mensagem fixa com a lista de estagiários ────────────

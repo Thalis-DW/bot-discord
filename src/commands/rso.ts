@@ -240,6 +240,26 @@ export async function handleRso(
 export async function handleBtnAbrirRso(
   interaction: ButtonInteraction
 ): Promise<void> {
+  const member = await interaction.guild!.members.fetch(interaction.user.id).catch(() => null);
+  const temAusencia = member?.roles.cache.some((r) => r.name === ROLE_AUSENCIA_JUSTIFICADA);
+  if (temAusencia) {
+    const btnRemover = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId("btn_self_remover_ausencia")
+        .setLabel("Remover minha Ausência")
+        .setStyle(ButtonStyle.Danger)
+        .setEmoji("❌")
+    );
+    await interaction.reply({
+      content:
+        "⛔ Você está com a tag **Ausência Justificada** e não pode abrir um RSO.\n" +
+        "Clique no botão abaixo para remover sua ausência e liberar o acesso.",
+      components: [btnRemover],
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
   const existente = await RSO.findOne({ userId: interaction.user.id, status: "aberto" });
   if (existente) {
     await interaction.reply({
@@ -456,6 +476,20 @@ export async function handleModalRsoObs(
   logger.info("RSO aberto", { user: rsoDoc.userNick, viatura: rsoDoc.viatura, guild: guild.name });
 }
 
+// ─── Limpeza de RSOs antigos (dispara ao encerrar RSO, a partir do dia 15) ────
+
+async function limparRsosAntigos(): Promise<void> {
+  const agora = new Date();
+  if (agora.getDate() < 15) return;
+
+  const inicioMesAtual = new Date(agora.getFullYear(), agora.getMonth(), 1);
+  const result = await RSO.deleteMany({ inicio: { $lt: inicioMesAtual } }).catch(() => null);
+
+  if (result && result.deletedCount > 0) {
+    logger.info("RSOs antigos apagados automaticamente", { count: result.deletedCount });
+  }
+}
+
 // ─── 3. Botão "Fechar RSO" ────────────────────────────────────────────────────
 
 export async function handleBtnFecharRso(
@@ -475,6 +509,7 @@ export async function handleBtnFecharRso(
 
   await atualizarMensagemRso(interaction.guild!, rso);
   await atualizarRegistroAtividade(interaction.guild!);
+  await limparRsosAntigos();
   await interaction.editReply({ content: "✅ RSO encerrado com sucesso!" });
 
   logger.info("RSO encerrado", { user: interaction.user.tag, viatura: rso.viatura });

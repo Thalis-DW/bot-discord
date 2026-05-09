@@ -39,6 +39,7 @@ import {
   handleModalSolicitarAusencia,
   handleBtnRemoverAusencia,
   handleSelectRemoverAusencia,
+  handleBtnSelfRemoverAusencia,
 } from "./commands/ausencia";
 import {
   handleRso,
@@ -181,6 +182,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
     if (interaction.isButton()) {
       if (interaction.customId === "btn_solicitar_ausencia") {
         await handleBtnSolicitarAusencia(interaction);
+      } else if (interaction.customId === "btn_self_remover_ausencia") {
+        await handleBtnSelfRemoverAusencia(interaction);
       } else if (interaction.customId === "btn_remover_ausencia") {
         await handleBtnRemoverAusencia(interaction);
       } else if (interaction.customId === "btn_emitir_convocacao") {

@@ -66,7 +66,12 @@ export async function handleMsgAusencia(
       .setCustomId("btn_solicitar_ausencia")
       .setLabel("Solicitar Ausência")
       .setStyle(ButtonStyle.Primary)
-      .setEmoji("📋")
+      .setEmoji("📋"),
+    new ButtonBuilder()
+      .setCustomId("btn_self_remover_ausencia")
+      .setLabel("Remover Ausência")
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji("❌")
   );
 
   await canal.send({ embeds: [embed], components: [row] });
@@ -204,7 +209,51 @@ export async function handleModalSolicitarAusencia(
   });
 }
 
-// ─── 4. Botão "Remover Ausência" → exibe UserSelectMenu ──────────────────────
+// ─── 4. Botão "Remover Ausência" (self) → remove própria tag ─────────────────
+
+export async function handleBtnSelfRemoverAusencia(
+  interaction: ButtonInteraction
+): Promise<void> {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const guild  = interaction.guild!;
+  const member = await guild.members.fetch(interaction.user.id).catch(() => null);
+
+  if (!member) {
+    await interaction.editReply({ content: "⚠️ Não foi possível encontrar seu perfil no servidor." });
+    return;
+  }
+
+  const roleAusencia = guild.roles.cache.find((r) => r.name === ROLE_AUSENCIA_JUSTIFICADA);
+
+  if (!roleAusencia) {
+    await interaction.editReply({
+      content: `⚠️ Role \`${ROLE_AUSENCIA_JUSTIFICADA}\` não encontrada no servidor.`,
+    });
+    return;
+  }
+
+  if (!member.roles.cache.has(roleAusencia.id)) {
+    await interaction.editReply({
+      content: `⚠️ Você não possui a tag **${ROLE_AUSENCIA_JUSTIFICADA}**.`,
+    });
+    return;
+  }
+
+  await member.roles.remove(roleAusencia);
+  await atualizarRegistroAtividade(guild);
+
+  await interaction.editReply({
+    content: `✅ Tag **${ROLE_AUSENCIA_JUSTIFICADA}** removida com sucesso.`,
+  });
+
+  logger.info("Ausência justificada removida (self)", {
+    user: member.nickname ?? member.user.username,
+    guild: guild.name,
+  });
+}
+
+// ─── 5. Botão "Remover Ausência" (staff) → exibe UserSelectMenu ──────────────────────
 
 export async function handleBtnRemoverAusencia(
   interaction: ButtonInteraction

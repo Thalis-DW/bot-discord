@@ -4,7 +4,6 @@ export interface Rank {
   roleName: string;         // cargo principal (nome EXATO no Discord)
   additionalRoles: string[]; // cargos extras concedidos junto com o principal
   nickPrefix: string;       // prefixo usado no apelido: "{nickPrefix} | Nome - RG"
-  emoji: string;
 }
 
 // Edite esta lista conforme os cargos existentes no seu servidor.
@@ -16,98 +15,97 @@ export const RANKS: Rank[] = [
     value: "soldado",
     roleName: "[❯] SOLDADO 1ª CLASSE PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "❯",
-    emoji: "🔵",
   },
   {
     label: "Cabo",
     value: "cabo",
     roleName: "[❯❯] CABO PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "❯❯",
-    emoji: "🔵",
+  
   },
   {
     label: "3º Sargento",
     value: "3sargento",
     roleName: "[❯❯❯] 3º SARGENTO PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ], // adicione os cargos extras desta graduação
     nickPrefix: "❯❯❯",
-    emoji: "🟡",
+  
   },
   {
     label: "2º Sargento",
     value: "2sargento",
     roleName: "[❯ ❯❯❯] 2º SARGENTO PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "❯ ❯❯❯",
-    emoji: "🟡",
+  
   },
   {
     label: "1º Sargento",
     value: "1sargento",
     roleName: "[❯❯ ❯❯❯] 1º SARGENTO PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "❯❯ ❯❯❯",
-    emoji: "🟡",
+  
   },
   {
     label: "Subtenente",
     value: "subtenente",
     roleName: "[△] SUBTENENTE PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "△",
-    emoji: "🟠",
+  
   },
   {
     label: "Aspirante a Oficial",
     value: "aspirante",
     roleName: "[✯] ASPIRANTE A OFICIAL PM",
     additionalRoles: [
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "PRAÇAS ESPECIAIS",
       "👮🏻‍♀️| Policial Militar",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "✯",
-    emoji: "🟠",
+  
   },
   {
     label: "2º Tenente",
@@ -115,14 +113,14 @@ export const RANKS: Rank[] = [
     roleName: "[✧] 2° TENENTE PM",
     additionalRoles: [
       "👮🏻‍♀️| Policial Militar",
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "EM/PM",
       "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "✧",
-    emoji: "🔴",
+  
   },
   {
     label: "1º Tenente",
@@ -130,14 +128,14 @@ export const RANKS: Rank[] = [
     roleName: "[✧✧] 1º TENENTE PM",
     additionalRoles: [
       "👮🏻‍♀️| Policial Militar",
-      "18° BPM/M - FORÇA TÁTICA",
+      "18° BPM/M - COMPANHIA DE FORÇA TÁTICA",
       "EM/PM",
       "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
       
     ],
     nickPrefix: "✧✧",
-    emoji: "🔴",
+  
   },
   {
     label: "Capitão",
@@ -145,6 +143,6 @@ export const RANKS: Rank[] = [
     roleName: "[✧✧✧] CAPITÃO PM",
     additionalRoles: [],
     nickPrefix: "✧✧✧",
-    emoji: "🔴",
+  
   },
 ];
