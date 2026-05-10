@@ -4,6 +4,7 @@ export interface Rank {
   roleName: string;         // cargo principal (nome EXATO no Discord)
   additionalRoles: string[]; // cargos extras concedidos junto com o principal
   nickPrefix: string;       // prefixo usado no apelido: "{nickPrefix} | Nome - RG"
+  emoji: string;            // emoji de exibição nos embeds e select menus
 }
 
 // Edite esta lista conforme os cargos existentes no seu servidor.
@@ -19,9 +20,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "❯",
+    emoji: "🪖",
   },
   {
     label: "Cabo",
@@ -32,10 +33,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "❯❯",
-  
+    emoji: "🪖",
   },
   {
     label: "3º Sargento",
@@ -46,10 +46,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
-    ], // adicione os cargos extras desta graduação
+    ],
     nickPrefix: "❯❯❯",
-  
+    emoji: "🎖️",
   },
   {
     label: "2º Sargento",
@@ -60,10 +59,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "❯ ❯❯❯",
-  
+    emoji: "🎖️",
   },
   {
     label: "1º Sargento",
@@ -74,10 +72,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "❯❯ ❯❯❯",
-  
+    emoji: "🎖️",
   },
   {
     label: "Subtenente",
@@ -88,10 +85,9 @@ export const RANKS: Rank[] = [
       "👮🏻‍♀️| Policial Militar",
       "PRAÇAS GRADUADOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "△",
-  
+    emoji: "⭐",
   },
   {
     label: "Aspirante a Oficial",
@@ -102,10 +98,9 @@ export const RANKS: Rank[] = [
       "PRAÇAS ESPECIAIS",
       "👮🏻‍♀️| Policial Militar",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "✯",
-  
+    emoji: "🌟",
   },
   {
     label: "2º Tenente",
@@ -117,10 +112,9 @@ export const RANKS: Rank[] = [
       "EM/PM",
       "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "✧",
-  
+    emoji: "💫",
   },
   {
     label: "1º Tenente",
@@ -132,10 +126,9 @@ export const RANKS: Rank[] = [
       "EM/PM",
       "OFICIAIS SUBALTERNOS",
       "🎓| ESTAGÍARIO - FORÇA TÁTICA",
-      
     ],
     nickPrefix: "✧✧",
-  
+    emoji: "💫",
   },
   {
     label: "Capitão",
@@ -143,6 +136,6 @@ export const RANKS: Rank[] = [
     roleName: "[✧✧✧] CAPITÃO PM",
     additionalRoles: [],
     nickPrefix: "✧✧✧",
-  
+    emoji: "👑",
   },
 ];
